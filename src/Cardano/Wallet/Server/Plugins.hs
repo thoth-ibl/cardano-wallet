@@ -20,11 +20,11 @@ module Cardano.Wallet.Server.Plugins
 
 import           Universum
 
+import           Control.Concurrent (threadDelay)
 import           Data.Acid (AcidState)
 import           Data.Aeson (encode)
 import qualified Data.ByteString.Char8 as BS8
 import qualified Data.Text as T
-import           Control.Concurrent (threadDelay)
 import           Data.Typeable (typeOf)
 import           Formatting.Buildable (build)
 import qualified Servant
@@ -198,7 +198,7 @@ walletClient :: NewWalletBackendParams -> Plugin Kernel.WalletMode
 walletClient (NewWalletBackendParams params) = const $ do
     modifyLoggerName (const "wallet-client") $ do
         logInfo "starting wallet-client"
-        (c, _) <- liftIO $ PP.setupClient params
+        (_, _) <- liftIO $ PP.setupClient params
         forever $ liftIO $ do
             threadDelay $ 5 * 1000000
             logInfo "hi"

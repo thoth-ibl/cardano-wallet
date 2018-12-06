@@ -16,3 +16,4 @@ type API =  Addresses.API
        :<|> Transactions.API
        :<|> Node.SettingsAPI
        :<|> Node.InfoAPI
+       :<|> Node.ProtocolParametersAPI
