@@ -32,7 +32,7 @@ setupClient params = do
     let tlsPrivKeyPath    = tpKeyPath  tlsParams
     let tlsClientCertPath = tpCertPath tlsParams -- ????
 
-    let tlsCACertPath = tpCertPath tlsParams
+    let tlsCACertPath = tpCaPath tlsParams
 
     caChain <- readSignedObject tlsCACertPath
 
