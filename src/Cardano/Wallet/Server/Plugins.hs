@@ -26,6 +26,7 @@ import           Data.Aeson (encode)
 import qualified Data.ByteString.Char8 as BS8
 import qualified Data.Text as T
 import           Data.Typeable (typeOf)
+import qualified Formatting
 import           Formatting.Buildable (build)
 import qualified Servant
 
@@ -41,6 +42,7 @@ import           Cardano.Wallet.API.V1.Headers (applicationJson)
 import           Cardano.Wallet.API.V1.ReifyWalletError
                      (translateWalletLayerErrors)
 import qualified Cardano.Wallet.API.V1.Types as V1
+import qualified Cardano.Wallet.Client as Client
 import           Cardano.Wallet.Kernel (DatabaseMode (..), PassiveWallet)
 import qualified Cardano.Wallet.Kernel.Diffusion as Kernel
 import qualified Cardano.Wallet.Kernel.Mode as Kernel
@@ -198,10 +200,14 @@ walletClient :: NewWalletBackendParams -> Plugin Kernel.WalletMode
 walletClient (NewWalletBackendParams params) = const $ do
     modifyLoggerName (const "wallet-client") $ do
         logInfo "starting wallet-client"
-        (_, _) <- liftIO $ PP.setupClient params
+        (c, _) <- liftIO $ PP.setupClient params
         forever $ liftIO $ do
             threadDelay $ 5 * 1000000
-            logInfo "hi"
+
+            response <- Client.getProtocolParameters c
+            case response of
+                Right r -> logInfo $ Formatting.sformat Formatting.build r
+                Left e  -> logInfo $ show e
 
 
 instance Buildable Servant.NoContent where
