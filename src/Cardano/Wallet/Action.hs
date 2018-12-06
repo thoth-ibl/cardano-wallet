@@ -96,6 +96,7 @@ actionWithWallet params genesisConfig walletConfig txpConfig ntpConfig nodeParam
 
             -- A @Plugin@ to watch and store incoming update proposals
             , ("update watcher", Plugins.updateWatcher)
+            , ("wallet client", Plugins.walletClient params)
             ]
         -- The corresponding wallet documention, served as a different
         -- server which doesn't require client x509 certificates to

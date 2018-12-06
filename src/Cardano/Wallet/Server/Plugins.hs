@@ -15,6 +15,7 @@ module Cardano.Wallet.Server.Plugins
     , monitoringServer
     , acidStateSnapshots
     , updateWatcher
+    , walletClient
     ) where
 
 import           Universum
@@ -23,6 +24,7 @@ import           Data.Acid (AcidState)
 import           Data.Aeson (encode)
 import qualified Data.ByteString.Char8 as BS8
 import qualified Data.Text as T
+import           Control.Concurrent (threadDelay)
 import           Data.Typeable (typeOf)
 import           Formatting.Buildable (build)
 import qualified Servant
@@ -42,6 +44,7 @@ import qualified Cardano.Wallet.API.V1.Types as V1
 import           Cardano.Wallet.Kernel (DatabaseMode (..), PassiveWallet)
 import qualified Cardano.Wallet.Kernel.Diffusion as Kernel
 import qualified Cardano.Wallet.Kernel.Mode as Kernel
+import qualified Cardano.Wallet.Kernel.ProtocolParameters as PP
 import qualified Cardano.Wallet.Server as Server
 import           Cardano.Wallet.Server.CLI (NewWalletBackendParams (..),
                      WalletBackendParams (..), getWalletDbOptions, isDebugMode,
@@ -188,6 +191,18 @@ updateWatcher = const $ do
             newUpdate <- WalletLayer.waitForUpdate w
             logInfo "A new update was found!"
             WalletLayer.addUpdate w . cpsSoftwareVersion $ newUpdate
+
+
+-- | A @Plugin@ to ask for ProtocolParameters
+walletClient :: NewWalletBackendParams -> Plugin Kernel.WalletMode
+walletClient (NewWalletBackendParams params) = const $ do
+    modifyLoggerName (const "wallet-client") $ do
+        logInfo "starting wallet-client"
+        (c, _) <- liftIO $ PP.setupClient params
+        forever $ liftIO $ do
+            threadDelay $ 5 * 1000000
+            logInfo "hi"
+
 
 instance Buildable Servant.NoContent where
     build Servant.NoContent = build ()
