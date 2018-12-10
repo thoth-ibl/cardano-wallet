@@ -36,13 +36,13 @@ import           Network.Wai.Handler.Warp (setOnException,
                      setOnExceptionResponse)
 import qualified Network.Wai.Handler.Warp as Warp
 
+import qualified Cardano.Node.Client as Node
 import           Cardano.NodeIPC (startNodeJsIPC)
 import           Cardano.Wallet.API as API
 import           Cardano.Wallet.API.V1.Headers (applicationJson)
 import           Cardano.Wallet.API.V1.ReifyWalletError
                      (translateWalletLayerErrors)
 import qualified Cardano.Wallet.API.V1.Types as V1
-import qualified Cardano.Wallet.Client as Client
 import           Cardano.Wallet.Kernel (DatabaseMode (..), PassiveWallet)
 import qualified Cardano.Wallet.Kernel.Diffusion as Kernel
 import qualified Cardano.Wallet.Kernel.Mode as Kernel
@@ -198,13 +198,13 @@ updateWatcher = const $ do
 -- | A @Plugin@ to ask for ProtocolParameters
 walletClient :: NewWalletBackendParams -> Plugin Kernel.WalletMode
 walletClient (NewWalletBackendParams params) = const $ do
-    modifyLoggerName (const "wallet-client") $ do
-        logInfo "starting wallet-client"
+    modifyLoggerName (const "node-client") $ do
+        logInfo "starting node-client"
         (c, _) <- liftIO $ PP.setupClient params
         forever $ liftIO $ do
             threadDelay $ 5 * 1000000
 
-            response <- Client.getProtocolParameters c
+            response <- runExceptT $ Node.getProtocolParameters c
             case response of
                 Right r -> logInfo $ Formatting.sformat Formatting.build r
                 Left e  -> logInfo $ show e
