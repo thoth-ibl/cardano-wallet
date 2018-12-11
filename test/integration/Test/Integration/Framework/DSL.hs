@@ -335,7 +335,7 @@ expectError = \case
 
 -- | Expect a successful response, without any further assumptions
 expectSuccess
-    :: (MonadIO m, MonadFail m, Show a)
+    :: (MonadIO m, MonadFail m)
     => Either ClientError a
     -> m ()
 expectSuccess = \case
