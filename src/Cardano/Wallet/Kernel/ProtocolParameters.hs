@@ -13,6 +13,7 @@ import           Network.HTTP.Client (Manager, newManager)
 --import           Cardano.Node.API
 import           Cardano.Node.Manager (mkHttpsManagerSettings, readSignedObject)
 --import qualified Pos.Node.API as P
+import           Pos.Util.Wlog (logInfo)
 import           Pos.Web.Types
 
 
@@ -28,8 +29,9 @@ setupClient params = do
 
 
     let tlsParams = maybe (error "TODO") id $ walletTLSParams params
-    let tlsPrivKeyPath    = tpKeyPath  tlsParams
-    let tlsClientCertPath = tpCertPath tlsParams -- ????
+    logInfo $ show tlsParams
+    let tlsPrivKeyPath    = "scripts/tls-files/client.pem"
+    let tlsClientCertPath = "scripts/tls-files/client.crt"
 
     let tlsCACertPath = tpCaPath tlsParams
 
