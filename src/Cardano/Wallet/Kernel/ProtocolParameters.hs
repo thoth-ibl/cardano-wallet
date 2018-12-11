@@ -45,7 +45,7 @@ newProtocolParameterAdaptor client = ProtocolParameterAdaptor
 
 setupClient :: NewWalletBackendParams -> IO (NodeHttpClient, Manager)
 setupClient (NewWalletBackendParams params) = do
-    let (serverHost', serverPort') = ("127.0.0.1", 8083 :: Int)
+    let (serverHost', serverPort') = ("localhost", 8080 :: Int)
     let (serverHost, serverPort) = (B8.unpack serverHost', fromIntegral serverPort')
     let serverId = (serverHost, B8.pack $ show serverPort)
 
@@ -55,7 +55,9 @@ setupClient (NewWalletBackendParams params) = do
     let tlsPrivKeyPath    = "scripts/tls-files/client.pem"
     let tlsClientCertPath = "scripts/tls-files/client.crt"
 
-    let tlsCACertPath = tpCaPath tlsParams
+    let tlsCACertPath = "scripts/tls-files/ca.crt"
+
+    logInfo . show $ tpCaPath tlsParams
 
 
     logInfo $ "Localhost: " <> (show serverHost)
