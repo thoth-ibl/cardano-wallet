@@ -197,12 +197,13 @@ updateWatcher = const $ do
 
 -- | A @Plugin@ to ask for ProtocolParameters
 walletClient :: NewWalletBackendParams -> Plugin Kernel.WalletMode
-walletClient (NewWalletBackendParams params) = const $ do
+walletClient params = const $ do
     modifyLoggerName (const "node-client") $ do
         logInfo "starting node-client"
         (c, _) <- liftIO $ PP.setupClient params
         forever $ liftIO $ do
             threadDelay $ 5 * 1000000
+            logInfo "hello!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
 
             response <- runExceptT $ NodeClient.getProtocolParameters c
             case response of
