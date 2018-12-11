@@ -15,18 +15,15 @@ module Cardano.Wallet.Server.Plugins
     , monitoringServer
     , acidStateSnapshots
     , updateWatcher
-    , walletClient
     ) where
 
 import           Universum
 
-import           Control.Concurrent (threadDelay)
 import           Data.Acid (AcidState)
 import           Data.Aeson (encode)
 import qualified Data.ByteString.Char8 as BS8
 import qualified Data.Text as T
 import           Data.Typeable (typeOf)
-import qualified Formatting
 import           Formatting.Buildable (build)
 import qualified Servant
 
@@ -36,7 +33,6 @@ import           Network.Wai.Handler.Warp (setOnException,
                      setOnExceptionResponse)
 import qualified Network.Wai.Handler.Warp as Warp
 
-import qualified Cardano.Node.Client as NodeClient
 import           Cardano.NodeIPC (startNodeJsIPC)
 import           Cardano.Wallet.API as API
 import           Cardano.Wallet.API.V1.Headers (applicationJson)
@@ -46,7 +42,6 @@ import qualified Cardano.Wallet.API.V1.Types as V1
 import           Cardano.Wallet.Kernel (DatabaseMode (..), PassiveWallet)
 import qualified Cardano.Wallet.Kernel.Diffusion as Kernel
 import qualified Cardano.Wallet.Kernel.Mode as Kernel
-import qualified Cardano.Wallet.Kernel.ProtocolParameters as PP
 import qualified Cardano.Wallet.Server as Server
 import           Cardano.Wallet.Server.CLI (NewWalletBackendParams (..),
                      WalletBackendParams (..), getWalletDbOptions, isDebugMode,
@@ -194,21 +189,6 @@ updateWatcher = const $ do
             logInfo "A new update was found!"
             WalletLayer.addUpdate w . cpsSoftwareVersion $ newUpdate
 
-
--- | A @Plugin@ to ask for ProtocolParameters
-walletClient :: NewWalletBackendParams -> Plugin Kernel.WalletMode
-walletClient params = const $ do
-    modifyLoggerName (const "node-client") $ do
-        logInfo "starting node-client"
-        (c, _) <- liftIO $ PP.setupClient params
-        forever $ liftIO $ do
-            threadDelay $ 5 * 1000000
-            logInfo "hello!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-
-            response <- runExceptT $ NodeClient.getProtocolParameters c
-            case response of
-                Right r -> logInfo $ Formatting.sformat Formatting.build r
-                Left e  -> logInfo $ show e
 
 
 instance Buildable Servant.NoContent where
