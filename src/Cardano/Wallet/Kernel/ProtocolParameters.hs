@@ -36,11 +36,11 @@ newProtocolParameterAdaptor client = ProtocolParameterAdaptor
     , getTipSlotId = f $ slotId <$> getProtocolParameters client
     }
       where
-        f :: Monad m => Show e => ExceptT e m a -> m a
+        f :: MonadIO m => Show e => Show a => ExceptT e m a -> m a
         f e = do
             x <- runExceptT e
             case x of
-                Right a   -> return a
+                Right a   -> liftIO $ logInfo (show a) >> return a
                 Left  err -> error $ "ProtocolParameters:44" <> (show err)
 
 setupClient :: NewWalletBackendParams -> IO (NodeHttpClient, Manager)
