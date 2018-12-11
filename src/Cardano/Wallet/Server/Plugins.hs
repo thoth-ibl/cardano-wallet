@@ -36,7 +36,7 @@ import           Network.Wai.Handler.Warp (setOnException,
                      setOnExceptionResponse)
 import qualified Network.Wai.Handler.Warp as Warp
 
-import qualified Cardano.Node.Client as Node
+import qualified Cardano.Node.Client as NodeClient
 import           Cardano.NodeIPC (startNodeJsIPC)
 import           Cardano.Wallet.API as API
 import           Cardano.Wallet.API.V1.Headers (applicationJson)
@@ -204,7 +204,7 @@ walletClient (NewWalletBackendParams params) = const $ do
         forever $ liftIO $ do
             threadDelay $ 5 * 1000000
 
-            response <- runExceptT $ Node.getProtocolParameters c
+            response <- runExceptT $ NodeClient.getProtocolParameters c
             case response of
                 Right r -> logInfo $ Formatting.sformat Formatting.build r
                 Left e  -> logInfo $ show e

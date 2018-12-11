@@ -111,9 +111,6 @@ mkHttpClient baseUrl manager = WalletClient
 
     , importWallet
         = run . importWalletR
-
-    , getProtocolParameters
-        = run getProtocolParametersR
     }
 
   where
@@ -181,7 +178,6 @@ mkHttpClient baseUrl manager = WalletClient
         :<|> transactionsAPI
         :<|> getNodeSettingsR
         :<|> getNodeInfoR
-        :<|> getProtocolParametersR
         = v1API
 
     v1API :<|> internalAPI = client (Proxy @(V1API :<|> InternalAPI))

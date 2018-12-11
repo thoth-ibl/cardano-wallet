@@ -25,6 +25,5 @@ handlers w =  Addresses.handlers    passiveWallet
          :<|> Transactions.handlers w
          :<|> Settings.handlers     passiveWallet
          :<|> Info.handlers         w
-         :<|>  error "TODO"
   where
     passiveWallet = walletPassiveLayer w

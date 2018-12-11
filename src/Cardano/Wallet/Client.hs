@@ -157,10 +157,6 @@ data WalletClient m
         :: m (Either ClientError ())
     , importWallet
         :: WalletImport -> Resp m Wallet
-
-    -- Endpoint
-    , getProtocolParameters
-         :: Resp m ProtocolParameters
     } deriving Generic
 
 -- | Paginates through all request pages and concatenates the result.
@@ -293,8 +289,6 @@ natMapClient phi f wc = WalletClient
         f $ phi $ resetWalletState wc
     , importWallet =
         f . phi . importWallet wc
-    , getProtocolParameters =
-        f $ phi $ getProtocolParameters wc
     }
 
 -- | Run the given natural transformation over the 'WalletClient'.

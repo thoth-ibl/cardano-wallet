@@ -92,7 +92,6 @@ module Cardano.Wallet.API.V1.Types (
   , WalletImport (..)
   -- * Settings
   , NodeSettings (..)
-  , ProtocolParameters (..)
   , SlotDuration
   , mkSlotDuration
   , BlockchainHeight
