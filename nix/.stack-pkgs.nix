@@ -2,8 +2,7 @@
   overlay = hackage:
     {
       packages = {
-        # fixme: no workies
-        # "generic-lens" = hackage.generic-lens."1.1.0.0".revisions.default;
+        "generic-lens" = hackage.generic-lens."1.1.0.0".revisions.default;
       } // {
         cardano-wallet = ./.stack.nix/cardano-wallet.nix;
         acid-state-exts = ./.stack.nix/acid-state-exts.nix;
